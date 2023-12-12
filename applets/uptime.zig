@@ -45,7 +45,22 @@ const Uptime = struct {
                     },
                 };
             },
-            else => return error.Unsupported,
+            .windows => blk: {
+                const time = std.time.epoch.EpochSeconds{
+                    .secs = std.math.lossyCast(u64, std.time.timestamp()),
+                };
+
+                const uptime = std.time.epoch.EpochSeconds{
+                    .secs = std.math.lossyCast(u64, ziggybox.os.windows.GetTickCount64()),
+                };
+
+                break :blk .{
+                    .time = time,
+                    .uptime = uptime,
+                    .loads = [3]f32{ 0, 0, 0 },
+                };
+            },
+            else => error.Unsupported,
         };
     }
 };

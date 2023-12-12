@@ -145,9 +145,9 @@ pub fn parse(comptime Id: type, comptime params: []const clap.Param(Id), comptim
 
     const Positional = FindPositionalType(Id, params, value_parsers);
 
-    var positionals = std.ArrayList(Positional).init(common.allocator);
+    var positionals = std.ArrayList(Positional).init(opt.allocator);
     var arguments = Arguments(Id, params, value_parsers, .list){};
-    errdefer deinitArgs(Id, params, common.allocator, &arguments);
+    errdefer deinitArgs(Id, params, opt.allocator, &arguments);
 
     var stream = clap.streaming.Clap(Id, std.process.ArgIterator){
         .params = params,
@@ -165,7 +165,7 @@ pub fn parse(comptime Id: type, comptime params: []const clap.Param(Id), comptim
                     Id,
                     param.*,
                     value_parsers,
-                    common.allocator,
+                    opt.allocator,
                     &arguments,
                     &positionals,
                     arg,
@@ -186,7 +186,7 @@ pub fn parse(comptime Id: type, comptime params: []const clap.Param(Id), comptim
         if (@typeInfo(field.type) == .Struct and
             @hasDecl(field.type, "toOwnedSlice"))
         {
-            const slice = try @field(arguments, field.name).toOwnedSlice(common.allocator);
+            const slice = try @field(arguments, field.name).toOwnedSlice(opt.allocator);
             @field(result_args, field.name) = slice;
         } else {
             @field(result_args, field.name) = @field(arguments, field.name);
@@ -196,6 +196,6 @@ pub fn parse(comptime Id: type, comptime params: []const clap.Param(Id), comptim
     return clap.ResultEx(Id, params, value_parsers){
         .args = result_args,
         .positionals = try positionals.toOwnedSlice(),
-        .allocator = common.allocator,
+        .allocator = opt.allocator,
     };
 }

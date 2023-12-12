@@ -135,6 +135,7 @@ fn Arguments(
 pub const ParseOptions = struct {
     allocator: std.mem.Allocator = common.allocator,
     diagnostic: ?*clap.Diagnostic = null,
+    limit: bool = false,
 };
 
 pub fn parse(comptime Id: type, comptime params: []const clap.Param(Id), comptime value_parsers: anytype, opt: ParseOptions) !clap.ResultEx(Id, params, value_parsers) {
@@ -142,16 +143,25 @@ pub fn parse(comptime Id: type, comptime params: []const clap.Param(Id), comptim
     defer iter.deinit();
 
     _ = iter.next();
+    return parseEx(Id, params, value_parsers, &iter, opt);
+}
 
+pub fn parseEx(
+    comptime Id: type,
+    comptime params: []const clap.Param(Id),
+    comptime value_parsers: anytype,
+    iter: anytype,
+    opt: ParseOptions,
+) !clap.ResultEx(Id, params, value_parsers) {
     const Positional = FindPositionalType(Id, params, value_parsers);
 
     var positionals = std.ArrayList(Positional).init(opt.allocator);
     var arguments = Arguments(Id, params, value_parsers, .list){};
     errdefer deinitArgs(Id, params, opt.allocator, &arguments);
 
-    var stream = clap.streaming.Clap(Id, std.process.ArgIterator){
+    var stream = clap.streaming.Clap(Id, std.meta.Child(@TypeOf(iter))){
         .params = params,
-        .iter = &iter,
+        .iter = iter,
         .diagnostic = opt.diagnostic,
     };
 
@@ -171,7 +181,9 @@ pub fn parse(comptime Id: type, comptime params: []const clap.Param(Id), comptim
                     arg,
                 );
 
-                if (i == x and x == (params.len - 1)) willBreak = true;
+                if (opt.limit) {
+                    if (i == x and x == (params.len - 1)) willBreak = true;
+                }
             }
         }
 

@@ -45,22 +45,34 @@ const Uptime = struct {
                     },
                 };
             },
-            .windows => blk: {
-                const time = std.time.epoch.EpochSeconds{
+            .windows => .{
+                .time = .{
                     .secs = std.math.lossyCast(u64, std.time.timestamp()),
-                };
-
-                const uptime = std.time.epoch.EpochSeconds{
+                },
+                .uptime = .{
                     .secs = std.math.lossyCast(u64, ziggybox.os.windows.GetTickCount64() / std.time.ms_per_s),
-                };
+                },
+                .loads = [3]f32{ 0, 0, 0 },
+            },
+            .uefi => blk: {
+                var time: std.os.uefi.Time = undefined;
+                try std.os.uefi.system_table.runtime_services.getTime(&time, null).err();
 
                 break :blk .{
-                    .time = time,
-                    .uptime = uptime,
+                    .time = .{
+                        .secs = ziggybox.os.uefi.epochFromTime(time),
+                    },
+                    .uptime = .{ .secs = 0 },
                     .loads = [3]f32{ 0, 0, 0 },
                 };
             },
-            else => error.Unsupported,
+            else => .{
+                .time = .{
+                    .secs = std.math.lossyCast(u64, std.time.timestamp()),
+                },
+                .uptime = .{ .secs = 0 },
+                .loads = [3]f32{ 0, 0, 0 },
+            },
         };
     }
 };

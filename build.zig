@@ -17,6 +17,7 @@ pub fn build(b: *std.Build) !void {
     const appletsList = b.option([]const []const u8, "applets", "List of applets") orelse &[_][]const u8{
         "arch",
         "uptime",
+        "yes",
     };
 
     const versionTag = b.option([]const u8, "version-tag", "Sets the version tag") orelse runAllowFail(b, &.{ "git", "rev-parse", "--abbrev-ref", "HEAD" });
@@ -65,6 +66,10 @@ pub fn build(b: *std.Build) !void {
                 .module = b.createModule(.{
                     .source_file = .{ .path = b.pathFromRoot("applets.zig") },
                     .dependencies = &.{
+                        .{
+                            .name = "clap",
+                            .module = clap.module("clap"),
+                        },
                         .{
                             .name = "ziggybox",
                             .module = ziggybox,

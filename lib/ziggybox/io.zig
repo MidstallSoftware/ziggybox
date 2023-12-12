@@ -11,6 +11,9 @@ pub usingnamespace switch (builtin.os.tag) {
             const buf16 = try std.unicode.utf8ToUtf16LeWithNull(alloc, buf);
             defer alloc.free(buf16);
             try sto.outputString(buf16).err();
+            if (buf.len > 0) {
+                if (buf[buf.len - 1] == '\n') try sto.outputString(&[1:0]u16{0x000D}).err();
+            }
             return buf.len;
         }
 

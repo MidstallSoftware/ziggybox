@@ -43,7 +43,7 @@ pub fn main() MainResult {
     );
 
     if (iter.next()) |execpath| {
-        const binname = std.fs.path.basename(execpath);
+        const binname = std.fs.path.stem(execpath);
 
         if (!std.mem.eql(u8, binname, "ziggybox")) {
             if (std.meta.stringToEnum(Applet, binname)) |applet| {

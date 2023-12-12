@@ -51,7 +51,7 @@ const Uptime = struct {
                 };
 
                 const uptime = std.time.epoch.EpochSeconds{
-                    .secs = std.math.lossyCast(u64, ziggybox.os.windows.GetTickCount64()),
+                    .secs = std.math.lossyCast(u64, ziggybox.os.windows.GetTickCount64() / std.time.ms_per_s),
                 };
 
                 break :blk .{
@@ -69,7 +69,7 @@ pub fn run(_: *std.process.ArgIterator) !void {
     const value = try Uptime.init();
     const stdout = ziggybox.io.getStdOut();
 
-    try stdout.print(" {d:0>2}:{d:0>2}:{d:0>2} up", .{
+    try stdout.print(" {d:0>2}:{d:0>2}:{d:0>2} up ", .{
         value.time.getDaySeconds().getHoursIntoDay(),
         value.time.getDaySeconds().getMinutesIntoHour(),
         value.time.secs % 60,
@@ -77,7 +77,7 @@ pub fn run(_: *std.process.ArgIterator) !void {
 
     const updays = value.uptime.getEpochDay().day;
     if (updays > 0) {
-        try stdout.print(" {} day", .{updays});
+        try stdout.print("{} day", .{updays});
         if (updays > 1) try stdout.writeByte('s');
         try stdout.writeAll(", ");
     }

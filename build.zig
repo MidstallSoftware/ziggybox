@@ -16,6 +16,9 @@ pub fn build(b: *std.Build) !void {
     const linkage = b.option(std.Build.Step.Compile.Linkage, "linkage", "Sets the link mode") orelse .static;
     const appletsList = b.option([]const []const u8, "applets", "List of applets") orelse &[_][]const u8{
         "arch",
+        "cal",
+        "false",
+        "true",
         "uptime",
         "yes",
     };

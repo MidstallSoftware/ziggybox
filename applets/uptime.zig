@@ -54,22 +54,8 @@ const Uptime = struct {
                 },
                 .loads = [3]f32{ 0, 0, 0 },
             },
-            .uefi => blk: {
-                var time: std.os.uefi.Time = undefined;
-                try std.os.uefi.system_table.runtime_services.getTime(&time, null).err();
-
-                break :blk .{
-                    .time = .{
-                        .secs = ziggybox.os.uefi.epochFromTime(time),
-                    },
-                    .uptime = .{ .secs = 0 },
-                    .loads = [3]f32{ 0, 0, 0 },
-                };
-            },
             else => .{
-                .time = .{
-                    .secs = std.math.lossyCast(u64, std.time.timestamp()),
-                },
+                .time = try ziggybox.os.time(),
                 .uptime = .{ .secs = 0 },
                 .loads = [3]f32{ 0, 0, 0 },
             },

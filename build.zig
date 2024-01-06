@@ -40,8 +40,8 @@ pub fn build(b: *std.Build) !void {
     });
 
     const ziggybox = b.createModule(.{
-        .source_file = .{ .path = b.pathFromRoot("lib/ziggybox.zig") },
-        .dependencies = &.{
+        .root_source_file = .{ .path = b.pathFromRoot("lib/ziggybox.zig") },
+        .imports = &.{
             .{
                 .name = "clap",
                 .module = clap.module("clap"),
@@ -62,13 +62,13 @@ pub fn build(b: *std.Build) !void {
     const writeFiles = b.addWriteFiles();
 
     const applets = b.createModule(.{
-        .source_file = writeFiles.add("applet-imports.zig", appletsImports.items),
-        .dependencies = &.{
+        .root_source_file = writeFiles.add("applet-imports.zig", appletsImports.items),
+        .imports = &.{
             .{
                 .name = "ziggybox-applets",
                 .module = b.createModule(.{
-                    .source_file = .{ .path = b.pathFromRoot("applets.zig") },
-                    .dependencies = &.{
+                    .root_source_file = .{ .path = b.pathFromRoot("applets.zig") },
+                    .imports = &.{
                         .{
                             .name = "clap",
                             .module = clap.module("clap"),
@@ -91,8 +91,8 @@ pub fn build(b: *std.Build) !void {
     , .{version});
 
     const optionsModule = b.createModule(.{
-        .source_file = options.getOutput(),
-        .dependencies = &.{
+        .root_source_file = options.getOutput(),
+        .imports = &.{
             .{
                 .name = "applets",
                 .module = applets,
@@ -111,13 +111,13 @@ pub fn build(b: *std.Build) !void {
     });
 
     if (buildHash) |h| {
-        exec.build_id = std.Build.Step.Compile.BuildId.initHexString(h[0..@min(h.len, 32)]);
+        exec.build_id = std.zig.BuildId.initHexString(h[0..@min(h.len, 32)]);
     }
 
-    exec.addModule("applets", applets);
-    exec.addModule("clap", clap.module("clap"));
-    exec.addModule("options", optionsModule);
-    exec.addModule("ziggybox", ziggybox);
+    exec.root_module.addImport("applets", applets);
+    exec.root_module.addImport("clap", clap.module("clap"));
+    exec.root_module.addImport("options", optionsModule);
+    exec.root_module.addImport("ziggybox", ziggybox);
     b.installArtifact(exec);
 
     for (appletsList) |applet| {
@@ -129,8 +129,8 @@ pub fn build(b: *std.Build) !void {
         , .{applet});
 
         const appletOptionsModule = b.createModule(.{
-            .source_file = appletOptions.getOutput(),
-            .dependencies = &.{
+            .root_source_file = appletOptions.getOutput(),
+            .imports = &.{
                 .{
                     .name = "applets",
                     .module = applets,
@@ -140,7 +140,7 @@ pub fn build(b: *std.Build) !void {
 
         const appletExec = b.addExecutable(.{
             .name = applet,
-            .root_source_file = exec.root_src,
+            .root_source_file = exec.root_module.root_source_file,
             .target = target,
             .optimize = optimize,
             .linkage = linkage,
@@ -149,13 +149,13 @@ pub fn build(b: *std.Build) !void {
         });
 
         if (buildHash) |h| {
-            appletExec.build_id = std.Build.Step.Compile.BuildId.initHexString(h[0..@min(h.len, 32)]);
+            appletExec.build_id = std.zig.BuildId.initHexString(h[0..@min(h.len, 32)]);
         }
 
-        appletExec.addModule("applets", applets);
-        appletExec.addModule("clap", clap.module("clap"));
-        appletExec.addModule("options", appletOptionsModule);
-        appletExec.addModule("ziggybox", ziggybox);
+        appletExec.root_module.addImport("applets", applets);
+        appletExec.root_module.addImport("clap", clap.module("clap"));
+        appletExec.root_module.addImport("options", appletOptionsModule);
+        appletExec.root_module.addImport("ziggybox", ziggybox);
         b.installArtifact(appletExec);
     }
 

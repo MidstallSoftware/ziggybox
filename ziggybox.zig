@@ -8,8 +8,8 @@ const ziggybox = @import("ziggybox");
 const MainResult = if (builtin.os.tag == .uefi) std.os.uefi.Status else anyerror!void;
 const Applet = std.meta.DeclEnum(applets);
 
-pub const std_options = struct {
-    pub const logFn = log;
+pub const std_options = std.Options{
+    .logFn = log,
 };
 
 pub fn log(

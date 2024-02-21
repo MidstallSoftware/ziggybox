@@ -22,6 +22,7 @@ pub fn build(b: *std.Build) !void {
         "false",
         "pwd",
         "true",
+        "umount",
         "uptime",
         "yes",
     };

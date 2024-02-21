@@ -5,5 +5,6 @@ pub const chroot = @import("applets/chroot.zig");
 pub const @"false" = @import("applets/false.zig");
 pub const pwd = @import("applets/pwd.zig");
 pub const @"true" = @import("applets/true.zig");
+pub const umount = @import("applets/umount.zig");
 pub const uptime = @import("applets/uptime.zig");
 pub const yes = @import("applets/yes.zig");

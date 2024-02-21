@@ -19,6 +19,7 @@ pub fn build(b: *std.Build) !void {
         "cal",
         "cat",
         "false",
+        "pwd",
         "true",
         "uptime",
         "yes",

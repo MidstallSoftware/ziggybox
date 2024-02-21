@@ -17,6 +17,7 @@ pub fn build(b: *std.Build) !void {
     const appletsList = b.option([]const []const u8, "applets", "List of applets") orelse &[_][]const u8{
         "arch",
         "cal",
+        "cat",
         "false",
         "true",
         "uptime",

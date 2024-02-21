@@ -18,6 +18,7 @@ pub fn build(b: *std.Build) !void {
         "arch",
         "cal",
         "cat",
+        "chroot",
         "false",
         "pwd",
         "true",

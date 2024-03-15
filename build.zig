@@ -13,7 +13,7 @@ pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const linkage = b.option(std.Build.Step.Compile.Linkage, "linkage", "Sets the link mode") orelse .static;
+    const linkage = b.option(std.builtin.LinkMode, "linkage", "Sets the link mode") orelse @as(std.builtin.LinkMode, if (target.result.isGnuLibC()) .dynamic else .static);
     const appletsList = b.option([]const []const u8, "applets", "List of applets") orelse &[_][]const u8{
         "arch",
         "cal",

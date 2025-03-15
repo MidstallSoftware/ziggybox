@@ -1,11 +1,7 @@
 .{
-    .name = "ziggybox",
+    .name = .ziggybox,
     .version = "0.1.0",
     .paths = .{"."},
-    .dependencies = .{
-        .clap = .{
-            .url = "https://github.com/Hejsil/zig-clap/archive/209ba4da76e46412acfe18f711cb0b041ff37f10.tar.gz",
-            .hash = "12200103e7b4a0cb162f2912df4fe97914024a25b5c9fcce6ea4119744f3f2a7f24e",
-        },
-    },
+    .dependencies = .{},
+    .fingerprint = 0x99a0b186d096a2ce,
 }

@@ -1,10 +1,50 @@
-pub const arch = @import("applets/arch.zig");
-pub const cal = @import("applets/cal.zig");
-pub const cat = @import("applets/cat.zig");
-pub const chroot = @import("applets/chroot.zig");
-pub const @"false" = @import("applets/false.zig");
-pub const pwd = @import("applets/pwd.zig");
-pub const @"true" = @import("applets/true.zig");
-pub const umount = @import("applets/umount.zig");
-pub const uptime = @import("applets/uptime.zig");
-pub const yes = @import("applets/yes.zig");
+pub const all: []const []const u8 = &.{
+    "arch",
+    "basename",
+    "cat",
+    "chmod",
+    "chroot",
+    "date",
+    "dsh",
+    "expr",
+    "false",
+    "find",
+    "grep",
+    "head",
+    "install",
+    "mkdir",
+    "mktemp",
+    "nproc",
+    "pwd",
+    "rm",
+    "sed",
+    "sort",
+    "tail",
+    "tar",
+    "true",
+    "uptime",
+};
+
+pub const min: []const []const u8 = &.{
+    "arch",
+    "basename",
+    "cat",
+    "date",
+    "expr",
+    "false",
+    "find",
+    "grep",
+    "head",
+    "install",
+    "mkdir",
+    "mktemp",
+    "nproc",
+    "pwd",
+    "rm",
+    "sed",
+    "sort",
+    "tail",
+    "tar",
+    "true",
+    "uptime",
+};
